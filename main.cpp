@@ -64,23 +64,68 @@ char trocarJogador(char jogador){
 	return 'X';
 }
 
-bool jogoEncerrado(){
+bool jogadorAtualGanhou(char tabuleiro[NLIN][NCOL], char simboloJogadorAtual){
+	//Verifica linhas
+	if(tabuleiro[0][0] == simboloJogadorAtual && tabuleiro[0][1] == simboloJogadorAtual && tabuleiro[0][2] == simboloJogadorAtual) {
+		return true;
+	}
+	if(tabuleiro[1][0] == simboloJogadorAtual && tabuleiro[1][1] == simboloJogadorAtual && tabuleiro[1][2] == simboloJogadorAtual) {
+		return true;
+	}
+	if(tabuleiro[2][0] == simboloJogadorAtual && tabuleiro[2][1] == simboloJogadorAtual && tabuleiro[2][2] == simboloJogadorAtual) {
+		return true;
+	}
+	
+	//Verifica Colunas
+	if(tabuleiro[0][0] == simboloJogadorAtual && tabuleiro[1][0] == simboloJogadorAtual && tabuleiro[2][0] == simboloJogadorAtual){
+		return true;
+	}
+	
+	if(tabuleiro[0][1] == simboloJogadorAtual && tabuleiro[1][1] == simboloJogadorAtual && tabuleiro[2][1] == simboloJogadorAtual){
+		return true;
+	}
+	
+	if(tabuleiro[0][2] == simboloJogadorAtual && tabuleiro[1][2] == simboloJogadorAtual && tabuleiro[2][2] == simboloJogadorAtual){
+		return true;
+	}
+	
+	//Verifica Diagonais
+	if(tabuleiro[0][0] == simboloJogadorAtual && tabuleiro[1][1] == simboloJogadorAtual && tabuleiro[2][2] == simboloJogadorAtual) {
+		return true;
+	}
+	
+	if(tabuleiro[0][2] == simboloJogadorAtual && tabuleiro[1][1] == simboloJogadorAtual && tabuleiro[2][0] == simboloJogadorAtual) {
+		return true;
+	}
+	
 	return false;
+}
+
+bool deuVelha(char tabuleiro[NLIN][NCOL]){
+	for(int i = 0; i < NLIN; i++){
+		for(int j = 0; j < NCOL; j++){
+			if(tabuleiro[i][j] == ' '){
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 int main(int argc, char** argv) {	
 	char tabuleiro [NLIN][NCOL];
+	
+	inicializarTabuleiro(tabuleiro);	
+	desenharTabuleiro(tabuleiro);	
+	
 	char simboloJogadorAtual = 'X';
+	char simboloJogadorGanhador = ' ';
+	bool jogoGanho = false;
+	bool velha = false;	
 	int linha;
 	int coluna;
-	inicializarTabuleiro(tabuleiro);
-	//mock(tabuleiro);
-	desenharTabuleiro(tabuleiro);
-	/*cout << "Jogador Atual: " << jogadorAtual << " | Apos trocar jogador: " << trocarJogador(jogadorAtual) << endl;
-	jogadorAtual = trocarJogador(jogadorAtual);
-	cout << "Jogador Atual: " << jogadorAtual << " | Apos trocar jogador: " << trocarJogador(jogadorAtual) << endl;*/
 	
-	while(!jogoEncerrado()){
+	while(!jogoGanho && !velha){
 		cout << "Jogador Atual(" << simboloJogadorAtual << "):" << endl;
 		cout << "Insira a linha(1-3):";
 		cin >> linha;
@@ -89,13 +134,26 @@ int main(int argc, char** argv) {
 		cin >> coluna;
 		cout << endl;
 		if(fazerJogada(tabuleiro, linha, coluna, simboloJogadorAtual)){
-			simboloJogadorAtual = trocarJogador(simboloJogadorAtual);
+			jogoGanho = jogadorAtualGanhou(tabuleiro, simboloJogadorAtual);
+			if(jogoGanho){
+				simboloJogadorGanhador = simboloJogadorAtual;
+			} else {
+				velha = deuVelha(tabuleiro);
+				if(!velha){
+					simboloJogadorAtual = trocarJogador(simboloJogadorAtual);
+				}
+			}
 		} else {
 			cout << "Jogada Invalida, tente novamente" << endl;
 		}
 		desenharTabuleiro(tabuleiro);
 	}
 	
-	cout << "Jogador " << simboloJogadorAtual << " ganhou!";
+	if(jogoGanho){
+		cout << "Jogador " << simboloJogadorGanhador << " ganhou!";
+	} else {
+		cout << "### Deu Velha ###";
+	}
+	
 			
 }
